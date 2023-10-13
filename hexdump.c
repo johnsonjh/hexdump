@@ -5,15 +5,16 @@
 static void
 hexdump(char *buf, ssize_t size)
 {
+  int  i, j;
   int  num = 0;
   char ch  = 0;
   char s[80 + 1];
 
-  for (int i = 0; i < size; i++)
+  for (i = 0; i < size; i++)
     {
       if (num == 0)
         {
-          for (int j = 0; j < 80; j++)
+          for (j = 0; j < 80; j++)
               s[j] = ' ';
           s[80] = 0;
         }
