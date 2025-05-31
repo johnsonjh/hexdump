@@ -1,9 +1,10 @@
 CFLAGS?=-O3
 .PHONY: all
-all: hexdump
+all: od hexdump
 hexdump:
+od:
 
 RM?=rm -f
 .PHONY: clean
 clean:
-	$(RM) hexdump core *.o *~
+	$(RM) hexdump od core *.o *~
