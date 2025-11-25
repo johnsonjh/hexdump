@@ -10,28 +10,32 @@ hexdump (char *buf, ssize_t size)
   int i, j, num = 0;
   char ch = 0, s[80 + 1];
 
-  for (i = 0; i < size; i++) {
-    if (num == 0) {
-      for (j = 0; j < 80; j++)
-        s[j] = ' ';
-      s[80] = 0;
+  for (i = 0; i < size; i++)
+    {
+      if (num == 0)
+        {
+          for (j = 0; j < 80; j++)
+            s[j] = ' ';
+
+          s[80] = 0;
+        }
+
+      s[num * 3] = (ch = ((buf[i] >> 4) & 0x0f)) > 9 ? ch + 'a' - 10 : ch + '0';
+      s[num * 3 + 1] = (ch = (buf[i] & 0x0f)) > 9 ? ch + 'a' - 10 : ch + '0';
+
+      if (buf[i] < 0x7f && buf[i] > ' ')
+        s[num + 60] = buf[i];
+      else
+        s[num + 60] = '.';
+
+      if ((i + 1) % 20 == 0)
+        {
+          (void)fprintf (stdout, "%s\n", s);
+          num = 0;
+        }
+      else
+        num++;
     }
-
-    s[num * 3] = (ch = ((buf[i] >> 4) & 0x0f)) > 9 ? ch + 'a' - 10 : ch + '0';
-    s[num * 3 + 1] = (ch = (buf[i] & 0x0f)) > 9 ? ch + 'a' - 10 : ch + '0';
-
-    if (buf[i] < 0x7f && buf[i] > ' ')
-      s[num + 60] = buf[i];
-    else
-      s[num + 60] = '.';
-
-    if ((i + 1) % 20 == 0) {
-      (void)fprintf (stdout, "%s\n", s);
-      num = 0;
-    }
-    else
-      num++;
-  }
 
   if (num != 0)
     (void)fprintf (stdout, "%s\n", s);
@@ -46,10 +50,13 @@ main (void)
   ssize_t ret;
 
   buffer = malloc (BUFSIZE);
-  if (!buffer) {
-    perror ("malloc");
-    return EXIT_FAILURE;
-  }
+
+  if (!buffer)
+    {
+      perror ("malloc");
+
+      return EXIT_FAILURE;
+    }
 
   while ((ret = read (0, buffer, BUFSIZE)) > 0)
     hexdump (buffer, ret);
